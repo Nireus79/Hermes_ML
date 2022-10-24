@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/update_history.js')}}"></script>
+        <h4>Trades</h4>
+        <div id="trades"></div>
+        <h4>Events</h4>
+        <div id="logs"></div>
+{% endblock %}

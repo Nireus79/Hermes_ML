@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"></script>
+{% endblock %}
+{% block title %}
+    Hermes
+{% endblock %}
+
+{% block body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/update_overview.js')}}"></script>
+    <span id="current_time"></span>
+    <span id="mode"></span>
+    <span id="rsi"></span>
+    <span id="condition"></span>
+    <span id="crypto_currency"></span>
+    <span id="fiat_currency"></span>
+    <span>Balance:</span>
+    <span id="crypto_balance"></span>
+    <span id="fiat_balance"></span>
+
+    <div id="high_frame_chart"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/high_frame_chart.js')}}"></script>
+    <div id="mid_frame_chart"></div>
+    <script type="text/javascript" src="{{url_for('static', filename='js/mid_frame_chart.js')}}"></script>
+
+    <div class="container">
+        <div class="fixed">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>
+                            Frames
+                        </th>
+                        <th>
+                            Trend
+                        </th>
+                        <th>
+                            Buy
+                        </th>
+                        <th>
+                            Sell
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            24 hours
+                        </td>
+                        <td>
+                            <span id="trend_24h"></span>
+                        </td>
+                        <td>
+                            <span id="buy_flag_4h"></span>
+                        </td>
+                        <td>
+                            <span id="sell_flag_4h"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            4 hours
+                        </td>
+                        <td>
+                            <span id="trend_4h"></span>
+                        </td>
+                        <td>
+                            <span id="buy_flag_1h"></span>
+                        </td>
+                        <td>
+                            <span id="sell_flag_1h"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="low_frame_chart" class="flex-item"></div>
+        <script type="text/javascript" src="{{url_for('static', filename='js/low_frame_chart.js')}}"></script>
+    </div>
+    <a href='/stop'><input type='button' value='Stop bot'></a>
+    <a href='/cancel'><input type='button' value='Cancel active order'></a>
+    <span id="log"></span>
+{% endblock %}
