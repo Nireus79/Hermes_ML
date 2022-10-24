@@ -175,6 +175,9 @@ def mid_frame_indicators(df, max_rsi):
     mdf['%D'] = mdf['%K'].rolling(3).mean()
     mdf['%DS'] = mdf['%D'].rolling(3).mean()  # Stochastic slow.
     mdf['rsi'] = rsi(mdf['close'], window=14, fillna=False)
+    mdf['atr'] = average_true_range(mdf['high'], mdf['low'], mdf['close'], window=14, fillna=False)
+    mdf['EMA13'] = mdf['close'].rolling(13).mean()
+    mdf['macd'] = macd_diff(mdf['close'], window_slow=26, window_fast=12, window_sign=9, fillna=False)
     mdf['buy flag'] = mdf.apply(lambda x: x['%D'] > x['%DS'] > 20 and x['rsi'] < max_rsi, axis=1)
     mdf['sell flag'] = mdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
     mdf['sale'] = mdf.apply(lambda row: check_flag_action(row['buy flag'], row['sell flag'], row['close']),
@@ -218,9 +221,12 @@ def prediction_model(df):
     k = df.iloc[-1]['%K']
     d = df.iloc[-1]['%D']
     rs = df.iloc[-1]['rsi']
+    atr = df.iloc[-1]['atr']
+    m13 = df.iloc[-1]['EMA13']
+    mac = df.iloc[-1]['macd']
     predictions = model.predict(x_test)
     score = accuracy_score(y_test, predictions)
-    prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs]])
+    prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs, atr, m13, mac]])
     if prediction and score > 0.5:
         return prediction
     else:
