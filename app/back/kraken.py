@@ -1,3 +1,5 @@
+import logging
+
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -227,6 +229,7 @@ def prediction_model(df):
     predictions = model.predict(x_test)
     score = accuracy_score(y_test, predictions)
     prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs, atr, m13, mac]])
+    # print(prediction, score)
     if prediction and score > 0.5:
         return prediction
     else:
@@ -326,16 +329,16 @@ class Api:
         return ohlc.iloc[::-1]  # reverse rows
 
 
-i24h = Api('DOT', 'EUR', 1440, 720)
-# i4h = Api('DOT', 'EUR', 240, 720)
-# i1h = Api('DOT', 'EUR', 60, 720)
-# i15m = Api('DOT', 'EUR', 15, 720)
-i24h_frame = i24h.get_frame()
-# i4h_frame = i4h.get_frame()
-# i1h_frame = i1h.get_frame()
-# i15m_frame = i15m.get_frame()
-
-fr = mid_frame_indicators(i24h_frame, 70)
-print(fr.head())
-pr = prediction_model(fr)
-print(pr)
+# i24h = Api('DOT', 'EUR', 1440, 720)
+# # i4h = Api('DOT', 'EUR', 240, 720)
+# # i1h = Api('DOT', 'EUR', 60, 720)
+# # i15m = Api('DOT', 'EUR', 15, 720)
+# i24h_frame = i24h.get_frame()
+# # i4h_frame = i4h.get_frame()
+# # i1h_frame = i1h.get_frame()
+# # i15m_frame = i15m.get_frame()
+#
+# fr = mid_frame_indicators(i24h_frame, 70)
+# print(fr.head())
+# pr = prediction_model(fr)
+# print(pr)

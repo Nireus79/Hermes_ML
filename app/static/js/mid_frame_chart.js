@@ -21,6 +21,7 @@ var options = {
           chart: {
           height: 230,
           type: 'line',
+          stacked: false
         },
         title: {
           text: 'Momentum frame',
