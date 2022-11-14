@@ -160,7 +160,6 @@ def high_frame_indicators(df):
     hdf['%DS'] = hdf['%D'].rolling(3).mean()  # Stochastic slow.
     hdf['negative momentum'] = hdf.apply(lambda x: x['%D'] < x['%DS'] < 80, axis=1)
     hdf['trend'] = hdf.apply(lambda x: x['close'] > x['EMA13'] and x['macd'] > 0, axis=1)
-    hdf.dropna(inplace=True)
     return hdf
 
 
@@ -187,7 +186,6 @@ def mid_frame_indicators(df, max_rsi):
     mdf['profit'] = mdf.apply(lambda row: check_flag_action(row['buy flag'], row['sell flag'], row['close']),
                               axis=1).str[2]
     mdf['prediction boolean'] = mdf.apply(lambda x: x['profit'] > 0, axis=1)
-    mdf.dropna(inplace=True)
     return mdf
 
 
@@ -201,7 +199,6 @@ def low_frame_indicators(df):
     """
     ldf = df.copy()
     ldf['atr'] = average_true_range(ldf['high'], ldf['low'], ldf['close'], window=14, fillna=False)
-    ldf.dropna(inplace=True)
     return ldf
 
 
@@ -329,16 +326,17 @@ class Api:
         return ohlc.iloc[::-1]  # reverse rows
 
 
-# i24h = Api('DOT', 'EUR', 1440, 720)
-# # i4h = Api('DOT', 'EUR', 240, 720)
-# # i1h = Api('DOT', 'EUR', 60, 720)
-# # i15m = Api('DOT', 'EUR', 15, 720)
+# i24h = Api('DOT', 'EUR', 1440, 40)
+# i4h = Api('DOT', 'EUR', 240, 40)
+# i1h = Api('DOT', 'EUR', 60, 40)
+# i15m = Api('DOT', 'EUR', 15, 40)
 # i24h_frame = i24h.get_frame()
-# # i4h_frame = i4h.get_frame()
-# # i1h_frame = i1h.get_frame()
-# # i15m_frame = i15m.get_frame()
+# i4h_frame = i4h.get_frame()
+# i1h_frame = i1h.get_frame()
+# i15m_frame = i15m.get_frame()
 #
-# fr = mid_frame_indicators(i24h_frame, 70)
-# print(fr.head())
-# pr = prediction_model(fr)
-# print(pr)
+# f = mid_frame_indicators(i24h_frame, 70)
+#
+# print(f.to_string())
+# # pr = prediction_model(fr)
+# # print(pr)
