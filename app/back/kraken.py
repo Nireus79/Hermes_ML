@@ -203,26 +203,28 @@ def low_frame_indicators(df):
 
 
 def prediction_model(df):
-    x = df.drop(columns=['prediction boolean', 'time', 'buy flag', 'sell flag', 'sale', 'profit', '%DS'])
-    y = df['prediction boolean']
+    pdf = df.copy()
+    pdf.dropna(inplace=True)
+    x = pdf.drop(columns=['prediction boolean', 'time', 'buy flag', 'sell flag', 'sale', 'profit', '%DS'])
+    y = pdf['prediction boolean']
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
 
     model = DecisionTreeClassifier()
     model.fit(x_train, y_train)
 
-    open_tst = df.iloc[-1]['open']
-    high = df.iloc[-1]['high']
-    low = df.iloc[-1]['low']
-    close = df.iloc[-1]['close']
-    vwap = df.iloc[-1]['vwap']
-    volume = df.iloc[-1]['volume']
-    count = df.iloc[-1]['count']
-    k = df.iloc[-1]['%K']
-    d = df.iloc[-1]['%D']
-    rs = df.iloc[-1]['rsi']
-    atr = df.iloc[-1]['atr']
-    m13 = df.iloc[-1]['EMA13']
-    mac = df.iloc[-1]['macd']
+    open_tst = pdf.iloc[-1]['open']
+    high = pdf.iloc[-1]['high']
+    low = pdf.iloc[-1]['low']
+    close = pdf.iloc[-1]['close']
+    vwap = pdf.iloc[-1]['vwap']
+    volume = pdf.iloc[-1]['volume']
+    count = pdf.iloc[-1]['count']
+    k = pdf.iloc[-1]['%K']
+    d = pdf.iloc[-1]['%D']
+    rs = pdf.iloc[-1]['rsi']
+    atr = pdf.iloc[-1]['atr']
+    m13 = pdf.iloc[-1]['EMA13']
+    mac = pdf.iloc[-1]['macd']
     predictions = model.predict(x_test)
     score = accuracy_score(y_test, predictions)
     prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs, atr, m13, mac]])
