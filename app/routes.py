@@ -1,4 +1,3 @@
-import time
 import threading
 from app.back.bot import elderbot, data_feed, signal_handler
 from app.back.kraken import cancel_order, time_stamp
@@ -52,7 +51,7 @@ def history():
 @app.route('/update', methods=['GET'])
 def update():
     dt = data_feed()
-    dt['current_time'] = time_stamp(time.time())
+    dt['current_time'] = time_stamp()
     dt['crypto_currency'] = asset_a
     dt['fiat_currency'] = asset_b
     dt['mode'] = mode
