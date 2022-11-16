@@ -121,19 +121,11 @@ def get_order_info(txid):
 def time_stamp():
     """
     Takes unix time and gives datetime format.
-    :return: Readable datetime format.
+    :return: Readable local datetime format.
     """
-    unix = time.time()
-    dt = datetime.utcfromtimestamp(int(unix)).strftime('%Y-%m-%d %H:%M:%S')
-    month = int(dt[5] + dt[6])
-    if month > 10 or month < 4:
-        ts = int(unix) + 7200  # 7200 +2 hours winter local time Athens
-        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        return stamp
-    else:
-        ts = int(unix) + 10800  # 10800 +3 hours summer local time Athens
-        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        return stamp
+    curr_time = time.localtime()
+    curr_clock = time.strftime("%Y-%m-%d %H:%M:%S", curr_time)
+    return curr_clock
 
 
 def check_flag_action(cb, cs, closing):
