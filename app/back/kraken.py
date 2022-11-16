@@ -1,5 +1,3 @@
-import logging
-
 from pykrakenapi import KrakenAPI
 import krakenex
 from datetime import datetime
@@ -120,14 +118,22 @@ def get_order_info(txid):
     return resp.json()
 
 
-def time_stamp(unix):
+def time_stamp():
     """
     Takes unix time and gives datetime format.
-    :param unix: unix time.time()
     :return: Readable datetime format.
     """
-    ts = int(unix) + 10800  # (7200 +2 hours winter, 10800 +3 hours summer) for local time Athens
-    return datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    unix = time.time()
+    dt = datetime.utcfromtimestamp(int(unix)).strftime('%Y-%m-%d %H:%M:%S')
+    month = int(dt[5] + dt[6])
+    if month > 10 or month < 4:
+        ts = int(unix) + 7200  # 7200 +2 hours winter local time Athens
+        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return stamp
+    else:
+        ts = int(unix) + 10800  # 10800 +3 hours summer local time Athens
+        stamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return stamp
 
 
 def check_flag_action(cb, cs, closing):
@@ -326,7 +332,6 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
-
 
 # i24h = Api('DOT', 'EUR', 1440, 40)
 # i4h = Api('DOT', 'EUR', 240, 40)
