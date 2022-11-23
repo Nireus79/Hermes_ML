@@ -277,7 +277,7 @@ def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, ma
 def limit_manager(mode, high, mid, low, cond, max_rsi):
     """
     Same as order_manager.
-    No actual order is set. Function is used in simulator and consulting mode
+    No actual order is set. (Function is used in simulator and consulting mode.)
     User is just informed for the action he has to take.
     :param max_rsi: maximum rsi in mid-frame
     :param mode: simulation or consulting
