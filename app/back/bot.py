@@ -102,33 +102,6 @@ def chart_data(high_frame, mid_frame, low_frame):
 
 def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, max_rsi):
     """
-    When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
-    order_manager is setting limit and stop loss levels.
-    Then starts monitoring periodically closing price at current running low time frame duration:
-        When intending to buy asset
-            if mid-frame momentum is strong:
-                if closing price exceeds set limit level:
-                    places a market buy order for the asset
-                else: (closing price under limit)
-                    if new closing price is lower than limit:
-                        if new higher high of low frame is lower than previous:
-                            sets new limit equal to new lower higher high.
-                        else:
-                            waits one low candle
-            else:
-                breaks to reevaluate conditions.
-        When intending to sell asset
-            if mid-frame momentum is weak:
-                if closing price is under stop level:
-                    places market sell order for the asset.
-                else: (closing price over stop-loss)
-                    if new closing price is higher than stop-loss:
-                        if new lower low of low frame is higher than previous set:
-                            sets new stop-loss equal to new higher lower-low.
-                        else:
-                            waits one low candle
-            else:
-                breaks to reevaluate conditions.
     :param mode: limit / market
     :param max_rsi: maximum rsi in mid-frame
     :param crypto_currency: asset a
@@ -137,12 +110,36 @@ def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, ma
     :param mid: mid-frame instance
     :param low: low-frame instance
     :param cond: buy / sell
+    When conditions to buy or sell are aligned in higher frames (buy or sell flag True)
+    order_manager is setting limit and stop loss levels.
+    Then starts monitoring periodically closing price at current running low time frame duration:
+        When intending to buy asset
+            if mid-frame momentum is strong:
+                if closing price exceeds set limit level:
+                    places a market buy order for the asset
+                else: (closing price under limit)
+                    if new closing price is lower than limit: (mid-frame momentum is still strong)
+                        if new higher high of low frame is lower than previous:
+                            sets new limit equal to new (lower) higher high.
+                        else:
+                            waits one low candle
+            else:
+                breaks to reevaluate conditions. (mid-frame momentum is not strong anymore)
+        When intending to sell asset
+            if mid-frame momentum is weak:
+                if closing price is under stop level:
+                    places market sell order for the asset.
+                else: (closing price over stop-loss and mid-frame momentum is still weak)
+                    if new closing price is higher than stop-loss:
+                        if new lower low of low frame is higher than previous set:
+                            sets new stop-loss equal to new (higher) lower-low.
+                        else:
+                            waits one low candle
+            else:
+                breaks to reevaluate conditions. (mid-frame momentum is not weak anymore)
+
     In stop-loss/limit levels an extra margin of current atr (average true range) is added,
     to include the volatility factor and limit false positioning.
-    After setting a buy order, safety "risk" and "reward" levels are stored as safety parameters.
-    Risk level = 'low' of mid-frame candle minus low-frame atr.
-    Risk = Buy price - Risk level
-    Reward = Buy price + (Risk * 2) As 1/2 Risk/Reward ratio.
 
     WARNING!!!
     When setting market order, volume must be set on the amount of the first asset.
@@ -280,7 +277,7 @@ def order_manager(mode, high, mid, low, cond, crypto_currency, fiat_currency, ma
 def limit_manager(mode, high, mid, low, cond, max_rsi):
     """
     Same as order_manager.
-    No actual order is set.
+    No actual order is set. Function is used in simulator and consulting mode
     User is just informed for the action he has to take.
     :param max_rsi: maximum rsi in mid-frame
     :param mode: simulation or consulting
