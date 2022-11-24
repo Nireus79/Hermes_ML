@@ -1,5 +1,5 @@
 Hermes
-A custom, real time, multiple time frame, consulting-trading bot application,
+A custom real time, multiple time frame, consulting-trading bot application,
 interpretation of Alexander Elder's "triple screen" forex market trading strategy.
 The strategy.
 The strategy is using data from three time frames, calculating indicators on first two and acts on the third.
