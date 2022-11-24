@@ -1,6 +1,5 @@
 from pykrakenapi import KrakenAPI
 import krakenex
-from datetime import datetime
 import requests
 import urllib.parse
 import hashlib
