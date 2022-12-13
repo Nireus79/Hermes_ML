@@ -507,8 +507,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
     """
     global condition, log, trend_24h, trend_4h, buy_flag_4h, buy_flag_1h, sell_flag_4h, sell_flag_1h, \
         crypto_balance, fiat_balance, closing_price, runningHighFrame, runningMidFrame, runningLowFrame
-    licence = True  # check()['license_active']
-    # TODO activate licence check
+    licence = check()['license_active']
     if licence:
         log = 'Your product licence is active. Thank you for using Hermes.'
         logging.info(log)
