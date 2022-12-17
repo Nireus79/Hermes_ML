@@ -476,11 +476,13 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                     wait 5min.
                 else:
                     if 4 hour mid-frame is strong (buy flag True):
-                        order_manager() evaluates to buy on 1 hour low frame.
+                        if 4 hour prediction model gives possible profitable trade:
+                            order_manager() evaluates to buy on 1 hour low frame.
                     elif 4 hour mid-frame conditions are NOT aligned:
                         if 4 hour high frame trend is positive:
                             if 1 hour momentum is strong and 4hour momentum is not weak:
-                                order_manager() evaluates to buy on 15 min low frame.
+                                if 1 hour prediction model gives possible profitable trade:
+                                    order_manager() evaluates to buy on 15 min low frame.
                             elif 1 hour mid-frame conditions are NOT aligned:
                                 sleep 5 minutes to review conditions.
             elif 4 hour high frame trend is positive ...same as above for lower frames (H4 M1 L15)...

@@ -200,6 +200,13 @@ def low_frame_indicators(df):
 
 
 def prediction_model(df):
+    """
+    Trains a machine learning model on previous hypothetical trades using given df data.
+    If that has more than 0.5 accuracy and the trade that is about to be placed
+    is possibly profitable, returns True.
+    :param df: Input
+    :return: True / False
+    """
     pdf = df.copy()
     pdf.dropna(inplace=True)
     x = pdf.drop(columns=['prediction boolean', 'time', 'buy flag', 'sell flag', 'sale', 'profit', '%DS'])
@@ -225,7 +232,6 @@ def prediction_model(df):
     predictions = model.predict(x_test)
     score = accuracy_score(y_test, predictions)
     prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs, atr, m13, mac]])
-    # print(prediction, score)
     if prediction and score > 0.5:
         return prediction
     else:
@@ -323,18 +329,3 @@ class Api:
         k = KrakenAPI(api)
         ohlc, last = k.get_ohlc_data(self.pair, interval=self.interval, since=self.frame)
         return ohlc.iloc[::-1]  # reverse rows
-
-# i24h = Api('DOT', 'EUR', 1440, 40)
-# i4h = Api('DOT', 'EUR', 240, 40)
-# i1h = Api('DOT', 'EUR', 60, 40)
-# i15m = Api('DOT', 'EUR', 15, 40)
-# i24h_frame = i24h.get_frame()
-# i4h_frame = i4h.get_frame()
-# i1h_frame = i1h.get_frame()
-# i15m_frame = i15m.get_frame()
-#
-# f = mid_frame_indicators(i24h_frame, 70)
-#
-# print(f.to_string())
-# # pr = prediction_model(fr)
-# # print(pr)
