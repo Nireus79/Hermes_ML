@@ -23,8 +23,7 @@ Mid frame.
 Trend momentum and position is detected with the use of stochastic slow indicator.
  Stochastic fast can be used for quicker response but in this case more force signals are generated.
   Stochastic slow is used as it is a 'smothered' version of stoch fast.
-   An additional indicator of strength is added (RSI) as choice for safety reasons, as when current price strength is above safety,
-    price is actually 'overbought' and probability of descent is high.
+   An additional indicator of strength is added (RSI) as choice for safety reasons, as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
      An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances.
       ATR of middle frame is also subtracted by lowest low of last mid-candle, to be used as pillow and avoid false pillow alarm.
        If trend frame momentum (Stochastic) is negative, bot will not buy asset. Same rule does not apply when selling.
