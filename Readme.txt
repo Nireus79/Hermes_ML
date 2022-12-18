@@ -21,7 +21,7 @@ General trend can be detected with the use of 200 periods EMA, combination of 9,
 In our case a preset combination of 13p EMA and macd indicators is used to determine the high frame trend.
 Mid frame.
 Trend momentum and position is detected with the use of stochastic slow indicator.
- Stochastic fast can be used for quicker response but in this case more force signals are generated.
+ Stochastic fast can be used for quicker response but in this case more false signals may be generated.
   Stochastic slow is used as it is a 'smothered' version of stoch fast.
    An additional indicator of strength is added (RSI) as choice for safety reasons, as when current price strength is above safety, price is actually 'overbought' and probability of descent is high.
      An extra condition of %ATR is given as choice, to avoid false buy flags in price consolidation instances.
