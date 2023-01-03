@@ -575,7 +575,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                 .format(time_stamp(), buy_flag_4h, prediction4h)
                             logging.info(log)
                             logs.append(log + '<br>')
-                            if prediction4h:
+                            if prediction4h == 1:
                                 if mode == 'trading':
                                     order_manager('market', i24h, i4h, i1h, condition,
                                                   crypto_currency, fiat_currency, max_rsi)
@@ -610,7 +610,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                                         log = '{} 1hour momentum is {}.'.format(time_stamp(), buy_flag_1h)
                                         logging.info(log)
                                         logs.append(log + '<br>')
-                                        if prediction1h:
+                                        if prediction1h == 1:
                                             if mode == 'trading':
                                                 order_manager('market', i4h, i1h, i15m, condition,
                                                               crypto_currency, fiat_currency, max_rsi)
@@ -653,7 +653,7 @@ def elderbot(mode, crypto_currency, fiat_currency, depth, max_rsi):
                             log = '{} 1hour momentum is {}.'.format(time_stamp(), buy_flag_1h)
                             logging.info(log)
                             logs.append(log + '<br>')
-                            if prediction1h:
+                            if prediction1h == 1:
                                 if mode == 'trading':
                                     order_manager('market', i4h, i1h, i15m, condition,
                                                   crypto_currency, fiat_currency, max_rsi)
