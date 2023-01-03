@@ -232,8 +232,8 @@ def prediction_model(df):
     predictions = model.predict(x_test)
     score = accuracy_score(y_test, predictions)
     prediction = model.predict([[open_tst, high, low, close, vwap, volume, count, k, d, rs, atr, m13, mac]])
-    if prediction and score > 0.5:
-        return prediction
+    if prediction == 1 and score > 0.5:
+        return True
     else:
         return False
 
