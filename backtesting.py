@@ -77,10 +77,10 @@ class Hermes(Strategy):
         self.model = DecisionTreeClassifier()
         self.df1 = df_indicated(dt1h)
         self.df4 = df_indicated(dt4h)
-        self.x1 = self.df1.drop(columns=['prediction boolean', 'buy flag', 'sell flag', 'sale', 'profit', '%DS'])
-        self.y1 = self.df1['prediction boolean']
-        self.x4 = self.df4.drop(columns=['prediction boolean', 'buy flag', 'sell flag', 'sale', 'profit', '%DS'])
-        self.y4 = self.df4['prediction boolean']
+        self.x1 = self.df1.drop(columns=['prediction boolean', 'buy flag', 'sell flag', 'sale', 'profit', '%DS']).values
+        self.y1 = self.df1['prediction boolean'].values
+        self.x4 = self.df4.drop(columns=['prediction boolean', 'buy flag', 'sell flag', 'sale', 'profit', '%DS']).values
+        self.y4 = self.df4['prediction boolean'].values
 
         self.x1_train, self.x1_test, self.y1_train, self.y1_test = train_test_split(self.x1, self.y1, test_size=0.2)
         self.x4_train, self.x4_test, self.y4_train, self.y4_test = train_test_split(self.x4, self.y4, test_size=0.2)
@@ -148,7 +148,7 @@ class Hermes(Strategy):
 
         self.sma13_1 = (self.h1_sma13 + self.m15_sma13) / 2
         self.macd_1 = (self.h1_macd + self.m15_macd) / 2
-        self.K_1 = (self.h1_k + self.m15_k) / 2
+        self.k_1 = (self.h1_k + self.m15_k) / 2
         self.d_1 = (self.h1_d + self.m15_d) / 2
         self.ds_1 = (self.h1_ds + self.m15_ds) / 2
         self.rsi_1 = (self.h1_rsi + self.m15_rsi) / 2
@@ -156,53 +156,56 @@ class Hermes(Strategy):
         self.buy_flag_1 = self.d_1 > self.ds_1 > self.lower_bound and self.rsi_1 < self.max_rsi
         self.sell_flag_1 = self.d_1 < self.ds_1 < self.upper_bound
 
-        self.data.sma13_4 = (self.h4_sma13 + self.m15_sma13) / 2
-        self.data.macd_4 = (self.h4_macd + self.m15_macd) / 2
-        self.data.K_4 = (self.h4_k + self.m15_k) / 2
-        self.data.d_4 = (self.h4_d + self.m15_d) / 2
-        self.data.ds_4 = (self.h4_ds + self.m15_ds) / 2
-        self.data.rsi_4 = (self.h4_rsi + self.m15_rsi) / 2
-        self.data.atr_4 = (self.h4_atr + self.m15_atr) / 2
-        self.buy_flag_4 = self.data.d_4 > self.data.ds_4 > self.lower_bound and self.data.rsi_4 < self.max_rsi
-        self.sell_flag_4 = self.data.d_4 < self.data.ds_4 < self.upper_bound
-        self.neg_mom_4 = self.data.d_4 < self.data.ds_4 < self.upper_bound
-        self.trend_4 = close > self.data.sma13_4 and self.data.macd_4 > 0 and self.neg_mom_4 is not True
+        self.sma13_4 = (self.h4_sma13 + self.m15_sma13) / 2
+        self.macd_4 = (self.h4_macd + self.m15_macd) / 2
+        self.k_4 = (self.h4_k + self.m15_k) / 2
+        self.d_4 = (self.h4_d + self.m15_d) / 2
+        self.ds_4 = (self.h4_ds + self.m15_ds) / 2
+        self.rsi_4 = (self.h4_rsi + self.m15_rsi) / 2
+        self.atr_4 = (self.h4_atr + self.m15_atr) / 2
+        self.buy_flag_4 = self.d_4 > self.ds_4 > self.lower_bound and self.rsi_4 < self.max_rsi
+        self.sell_flag_4 = self.d_4 < self.ds_4 < self.upper_bound
+        self.neg_mom_4 = self.d_4 < self.ds_4 < self.upper_bound
+        self.trend_4 = close > self.sma13_4 and self.macd_4 > 0 and self.neg_mom_4 is not True
+
+        self.buy_signal_4 = self.trend_4 and self.buy_flag_1
+        self.sell_signal_4 = self.trend_4 and self.sell_flag_1
 
         self.sma13_24 = (self.day_sma13 + self.m15_sma13) / 2
         self.macd_24 = (self.day_macd + self.m15_macd) / 2
-        self.K_24 = (self.day_k + self.m15_k) / 2
+        self.k_24 = (self.day_k + self.m15_k) / 2
         self.d_24 = (self.day_d + self.m15_d) / 2
         self.ds_24 = (self.day_ds + self.m15_ds) / 2
         self.neg_mom_24 = self.d_24 < self.ds_24 < self.upper_bound
-        self.trend_24 = close > self.sma13_24 and self.macd_24 > 0
+        self.trend_24 = close > self.sma13_24 and self.macd_24 > 0 and self.neg_mom_24 is not True
 
-        self.forecasts1 = self.I(lambda: np.repeat(np.nan, len(self.data)), name='forecast1')
-        self.forecasts4 = self.I(lambda: np.repeat(np.nan, len(self.data)), name='forecast4')
-        # self.forecasts are now empty
+        self.buy_signal_24 = self.trend_24 and self.buy_flag_4
+        self.sell_signal_24 = self.trend_24 and self.sell_flag_4
 
     def next(self):
 
         close = self.data.Close
 
-        self.x4f = self.x4.iloc[-1:]
-        forecast4 = self.model4.predict(self.x4f)[0]
-        self.forecasts4[-1] = forecast4
+        prediction4 = self.model4.predict([[self.data.Open[-1], self.data.High[-1], self.data.Low[-1],
+                                            self.data.Close[-1], self.data.Volume[-1],
+                                            self.k_4[-1], self.d_4[-1], self.rsi_4[-1], self.atr_4[-1],
+                                            self.sma13_4[-1], self.macd_4[-1]]])
+        prediction1 = self.model1.predict([[self.data.Open[-1], self.data.High[-1], self.data.Low[-1],
+                                            self.data.Close[-1], self.data.Volume[-1],
+                                            self.k_1[-1], self.d_1[-1], self.rsi_1[-1], self.atr_1[-1],
+                                            self.sma13_1[-1], self.macd_1[-1]]])
 
-        self.x1f = self.x1.iloc[-1:]
-        forecast1 = self.model1.predict(self.x1f)[0]
-        self.forecasts1[-1] = forecast1
-
-        if self.trend_24 and self.buy_flag_4 and forecast4 == 1 and self.h1_lim[-2] < close:
+        if self.buy_signal_24[-2] and prediction4 == 1 and self.h1_lim[-2] < close:
             self.buy()
-        elif self.trend_4 and self.buy_flag_1 and forecast1 == 1 and self.m15_lim[-2] < close:
+        elif self.buy_signal_4[-2] and prediction1 == 1 and self.m15_lim[-2] < close:
             self.buy()
         elif self.trend_24 is False:
             self.position.close()
         elif self.trend_4 is False:
             self.position.close()
-        elif self.trend_24 and self.sell_flag_4 and self.h1_stop[-2] > close:
+        elif self.sell_signal_24[-2] and self.h1_stop[-2] > close:
             self.position.close()
-        elif self.trend_4 and self.sell_flag_1 and self.m15_stop[-2] > close:
+        elif self.sell_signal_4[-2] and self.m15_stop[-2] > close:
             self.position.close()
 
 
