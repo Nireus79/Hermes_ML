@@ -92,59 +92,60 @@ class Hermes(Strategy):
         self.score4 = accuracy_score(self.y4_test, self.predictions4)
         print('score1', self.score1, 'score4', self.score4)
 
-        self.m15_sma13 = self.I(sma_indicator, pd.Series(close), 13)
+        self.m15_sma13 = self.I(sma_indicator, pd.Series(close), 13, plot=False)
         self.m15_sma13[np.isnan(self.m15_sma13)] = 0
-        self.m15_macd = self.I(macd_diff, pd.Series(close))
+        self.m15_macd = self.I(macd_diff, pd.Series(close), plot=False)
         self.m15_macd[np.isnan(self.m15_macd)] = 0
-        self.m15_k = self.I(k_wrapper, self.data.df)
+        self.m15_k = self.I(k_wrapper, self.data.df, plot=False)
         self.m15_k[np.isnan(self.m15_k)] = 0
-        self.m15_d = self.I(sma_indicator, pd.Series(self.m15_k), 3)
+        self.m15_d = self.I(sma_indicator, pd.Series(self.m15_k), 3, plot=False)
         self.m15_d[np.isnan(self.m15_d)] = 0
-        self.m15_ds = self.I(sma_indicator, pd.Series(self.m15_d), 3)  # %DS
+        self.m15_ds = self.I(sma_indicator, pd.Series(self.m15_d), 3, plot=False)  # %DS
         self.m15_ds[np.isnan(self.m15_ds)] = 0
-        self.m15_rsi = resample_apply('1H', rsi, close)
+        self.m15_rsi = resample_apply('1H', rsi, close, plot=False)
         self.m15_rsi[np.isnan(self.m15_rsi)] = 0
-        self.m15_atr = self.I(atr_wrapper, self.data.df)
+        self.m15_atr = self.I(atr_wrapper, self.data.df, plot=False)
         self.m15_lim = high + self.m15_atr
         self.m15_stop = low - self.m15_atr
 
-        self.h1_sma13 = resample_apply('1H', sma_indicator, close)
+        self.h1_sma13 = resample_apply('1H', sma_indicator, close, plot=False)
         self.h1_sma13[np.isnan(self.h1_sma13)] = 0
-        self.h1_macd = resample_apply('1H', macd_diff, close)
+        self.h1_macd = resample_apply('1H', macd_diff, close, plot=False)
         self.h1_macd[np.isnan(self.h1_macd)] = 0
-        self.h1_k = resample_apply('1H', k_wrapper, self.data.df)
+        self.h1_k = resample_apply('1H', k_wrapper, self.data.df, plot=False)
         self.h1_k[np.isnan(self.h1_k)] = 0
-        self.h1_d = self.I(sma_indicator, pd.Series(self.h1_k), 3)  # %D
+        self.h1_d = self.I(sma_indicator, pd.Series(self.h1_k), 3, plot=False)  # %D
         self.h1_d[np.isnan(self.h1_d)] = 0
-        self.h1_ds = self.I(sma_indicator, pd.Series(self.h1_d), 3)  # %DS
+        self.h1_ds = self.I(sma_indicator, pd.Series(self.h1_d), 3, plot=False)  # %DS
         self.h1_ds[np.isnan(self.h1_ds)] = 0
-        self.h1_rsi = resample_apply('1H', rsi, close)
+        self.h1_rsi = resample_apply('1H', rsi, close, plot=False)
         self.h1_rsi[np.isnan(self.h1_rsi)] = 0
-        self.h1_atr = resample_apply('1H', atr_wrapper, self.data.df)
+        self.h1_atr = resample_apply('1H', atr_wrapper, self.data.df, plot=False)
         self.h1_atr[np.isnan(self.h1_atr)] = 0
         self.h1_lim = high + self.h1_atr
         self.h1_stop = low - self.h1_atr
+        self.h1_close = close
 
-        self.h4_sma13 = resample_apply('4H', sma_indicator, close)
+        self.h4_sma13 = resample_apply('4H', sma_indicator, close, plot=False)
         self.h4_sma13[np.isnan(self.h4_sma13)] = 0
-        self.h4_macd = resample_apply('4H', macd_diff, close)
+        self.h4_macd = resample_apply('4H', macd_diff, close, plot=False)
         self.h4_macd[np.isnan(self.h4_macd)] = 0
-        self.h4_k = resample_apply('4H', k_wrapper, self.data.df)
+        self.h4_k = resample_apply('4H', k_wrapper, self.data.df, plot=False)
         self.h4_k[np.isnan(self.h4_k)] = 0
-        self.h4_d = self.I(sma_indicator, pd.Series(self.h4_k), 3)  # %D
+        self.h4_d = self.I(sma_indicator, pd.Series(self.h4_k), 3, plot=False)  # %D
         self.h4_d[np.isnan(self.h4_d)] = 0
-        self.h4_ds = self.I(sma_indicator, pd.Series(self.h4_d), 3)  # %DS
+        self.h4_ds = self.I(sma_indicator, pd.Series(self.h4_d), 3, plot=False)  # %DS
         self.h4_ds[np.isnan(self.h4_ds)] = 0
-        self.h4_rsi = resample_apply('4H', rsi, close)
+        self.h4_rsi = resample_apply('4H', rsi, close, plot=False)
         self.h4_rsi[np.isnan(self.h4_rsi)] = 0
-        self.h4_atr = resample_apply('4H', atr_wrapper, self.data.df)
+        self.h4_atr = resample_apply('4H', atr_wrapper, self.data.df, plot=False)
         self.h4_atr[np.isnan(self.h4_atr)] = 0
 
-        self.day_sma13 = resample_apply('D', sma_indicator, close)
-        self.day_macd = resample_apply('D', macd_diff, close)
-        self.day_k = resample_apply('D', k_wrapper, self.data.df)
-        self.day_d = self.I(sma_indicator, pd.Series(self.day_k), 3)  # %D
-        self.day_ds = self.I(sma_indicator, pd.Series(self.day_d), 3)  # %DS
+        self.day_sma13 = resample_apply('D', sma_indicator, close, plot=False)
+        self.day_macd = resample_apply('D', macd_diff, close, plot=False)
+        self.day_k = resample_apply('D', k_wrapper, self.data.df, plot=False)
+        self.day_d = self.I(sma_indicator, pd.Series(self.day_k), 3, plot=False)  # %D
+        self.day_ds = self.I(sma_indicator, pd.Series(self.day_d), 3, plot=False)  # %DS
 
         self.sma13_1 = (self.h1_sma13 + self.m15_sma13) / 2
         self.macd_1 = (self.h1_macd + self.m15_macd) / 2
@@ -183,7 +184,6 @@ class Hermes(Strategy):
         self.sell_signal_24 = self.trend_24 and self.sell_flag_4
 
     def next(self):
-
         close = self.data.Close
 
         prediction4 = self.model4.predict([[self.data.Open[-1], self.data.High[-1], self.data.Low[-1],
@@ -195,17 +195,17 @@ class Hermes(Strategy):
                                             self.k_1[-1], self.d_1[-1], self.rsi_1[-1], self.atr_1[-1],
                                             self.sma13_1[-1], self.macd_1[-1]]])
 
-        if self.buy_signal_24[-2] and prediction4 == 1 and self.h1_lim[-2] < close:
+        if self.buy_signal_24[-2] and prediction4 == 1 and self.h1_lim[-2] < self.h1_close[-1]:
             self.buy()
-        elif self.buy_signal_4[-2] and prediction1 == 1 and self.m15_lim[-2] < close:
+        elif self.buy_signal_4[-2] and prediction1 == 1 and self.m15_lim[-2] < close[-1]:
             self.buy()
-        elif self.trend_24 is False:
+        elif self.trend_24 is not True:
             self.position.close()
-        elif self.trend_4 is False:
+        elif self.trend_4 is not True:
             self.position.close()
-        elif self.sell_signal_24[-2] and self.h1_stop[-2] > close:
+        elif self.sell_signal_24[-2] and self.h1_stop[-2] > self.h1_close[-1]:
             self.position.close()
-        elif self.sell_signal_4[-2] and self.m15_stop[-2] > close:
+        elif self.sell_signal_4[-2] and self.m15_stop[-2] > close[-1]:
             self.position.close()
 
 
