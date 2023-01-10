@@ -70,9 +70,9 @@ class Hermes(Strategy):
     max_rsi = 70
 
     def init(self):
+        close = self.data.Close
         high = self.data.High
         low = self.data.Low
-        close = self.data.Close
 
         self.model = DecisionTreeClassifier()
         self.df1 = df_indicated(dt1h)
@@ -105,8 +105,8 @@ class Hermes(Strategy):
         self.m15_rsi = resample_apply('1H', rsi, close, plot=False)
         self.m15_rsi[np.isnan(self.m15_rsi)] = 0
         self.m15_atr = self.I(atr_wrapper, self.data.df, plot=False)
-        self.m15_lim = high + self.m15_atr
-        self.m15_stop = low - self.m15_atr
+        self.lim15 = high + self.m15_atr
+        self.stop15 = low - self.m15_atr
 
         self.h1_sma13 = resample_apply('1H', sma_indicator, close, plot=False)
         self.h1_sma13[np.isnan(self.h1_sma13)] = 0
@@ -122,9 +122,8 @@ class Hermes(Strategy):
         self.h1_rsi[np.isnan(self.h1_rsi)] = 0
         self.h1_atr = resample_apply('1H', atr_wrapper, self.data.df, plot=False)
         self.h1_atr[np.isnan(self.h1_atr)] = 0
-        self.h1_lim = high + self.h1_atr
-        self.h1_stop = low - self.h1_atr
-        self.h1_close = close
+        self.lim1 = high + self.h1_atr
+        self.stop1 = low - self.h1_atr
 
         self.h4_sma13 = resample_apply('4H', sma_indicator, close, plot=False)
         self.h4_sma13[np.isnan(self.h4_sma13)] = 0
@@ -182,9 +181,15 @@ class Hermes(Strategy):
 
         self.buy_signal_24 = self.trend_24 and self.buy_flag_4
         self.sell_signal_24 = self.trend_24 and self.sell_flag_4
+        self.state_variable = None
 
     def next(self):
+
         close = self.data.Close
+        self.buy_liml15 = self.lim15 < close[-1]
+        self.sell_stop15 = self.stop15 > close[-1]
+        self.buy_liml1 = self.lim1 < close[-1]
+        self.sell_stop1 = self.stop1 > close[-1]
 
         prediction4 = self.model4.predict([[self.data.Open[-1], self.data.High[-1], self.data.Low[-1],
                                             self.data.Close[-1], self.data.Volume[-1],
@@ -195,18 +200,39 @@ class Hermes(Strategy):
                                             self.k_1[-1], self.d_1[-1], self.rsi_1[-1], self.atr_1[-1],
                                             self.sma13_1[-1], self.macd_1[-1]]])
 
-        if self.buy_signal_24[-2] and prediction4 == 1 and self.h1_lim[-2] < self.h1_close[-1]:
-            self.buy()
-        elif self.buy_signal_4[-2] and prediction1 == 1 and self.m15_lim[-2] < close[-1]:
-            self.buy()
-        elif self.trend_24 is not True:
-            self.position.close()
-        elif self.trend_4 is not True:
-            self.position.close()
-        elif self.sell_signal_24[-2] and self.h1_stop[-2] > self.h1_close[-1]:
-            self.position.close()
-        elif self.sell_signal_4[-2] and self.m15_stop[-2] > close[-1]:
-            self.position.close()
+        if self.state_variable:
+            if self.state_variable == 'Buy24':
+                if self.buy_liml1:
+                    self.buy()
+            elif self.state_variable == 'Buy4':
+                if self.buy_liml15:
+                    self.buy()
+            elif self.state_variable == 'Sell24':
+                if self.sell_stop1:
+                    self.position.close()
+            elif self.state_variable == 'Sell4':
+                if self.sell_stop15:
+                    self.position.close()
+            self.state_variable = None
+
+        if not self.position:
+            if self.buy_signal_24 and prediction4 == 1:
+                self.state_variable = 'Buy24'
+            elif self.buy_signal_4 and prediction1 == 1:
+                self.state_variable = 'Buy4'
+            elif self.sell_signal_24:
+                self.state_variable = 'Sell24'
+            elif self.sell_signal_4:
+                self.state_variable = 'Sell4'
+        elif self.position:
+            if self.trend_24 is not True:
+                if self.sell_stop15:
+                    self.position.close()
+                    self.state_variable = None
+            elif self.trend_4 is not True:
+                if self.sell_stop15:
+                    self.position.close()
+                    self.state_variable = None
 
 
 bt = Backtest(df15m, Hermes, cash=100000, commission=0.004, exclusive_orders=True)
